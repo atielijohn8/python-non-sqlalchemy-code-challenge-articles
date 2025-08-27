@@ -12,7 +12,7 @@ class Article:
     
     @title.setter
     def title(self, value):
-        if hasattr(self, '_title'):
+        if hasattr(self, '_title'):#checks if it has title
             return
         if isinstance(value, str) and 5<= len(value) <= 50:
             self._title = value
@@ -70,13 +70,22 @@ class Magazine:
             self._category = value
             
     def articles(self):
-        pass
+        return [article for article in Article.all if article.magazine == self]
 
     def contributors(self):
-        pass
+         return list(set([article.author for article in self.articles()]))
 
     def article_titles(self):
-        pass
+        articles = self.articles()
+        return [article.title for article in articles] if articles else None
 
     def contributing_authors(self):
-        pass
+        author_counts = {}
+        for article in self.articles():
+            author_counts[article.author] = author_counts.get(article.author, 0) + 1
+        authors = [author for author, count in author_counts.items() if count > 2]
+        return authors if authors else None
+    @classmethod
+    def top_publisher(cls):
+        if not Article.all:
+            return None
